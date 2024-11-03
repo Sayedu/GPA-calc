@@ -90,12 +90,35 @@ function App() {
                 <option value='F'>F</option>
               </select>
               <input
-                type='number'
-                value={course.credits}
-                onChange={(e) => handleCourseChange(index, 'credits', Math.max(1, e.target.value))}
-                className='border border-gray-300 rounded p-2 w-1/4 mr-2'
-                min='1'
+                type="number"
+                value={course.credits === 1 ? '1' : course.credits} // Show empty input if value is 1 to hide the default 1
+                onFocus={(e) => {
+                  if (e.target.value === '1') e.target.value = ''; // Clear the input if it's 1 when focused
+                }}
+                onBlur={(e) => {
+                  if (e.target.value === '' || e.target.value == 0) {
+                    handleCourseChange(index, 'credits', 1); // Set to 1 if left empty or at 0 on blur
+                  
+                  } else {
+                    handleCourseChange(index, 'credits', parseInt(e.target.value, 10)); // Update with integer to remove leading zeros
+                  }
+                }}
+                onChange={(e) => {
+                  let value = e.target.value;
+                  if (value) {
+                    // Remove leading zeros
+                    value = value.replace(/^0+/, '') || '0';
+                  }
+                  handleCourseChange(index, 'credits', value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && (e.target.value === '' || e.target.value === '0')) {
+                    handleCourseChange(index, 'credits', 1); // Set to 1 on pressing Enter if empty or at 0
+                  }
+                }}
+                className="border border-gray-300 rounded p-2 w-1/4 mr-2"
               />
+
               <label className='flex items-center'>
                 <input
                   type='checkbox'
